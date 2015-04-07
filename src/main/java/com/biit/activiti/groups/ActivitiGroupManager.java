@@ -28,16 +28,16 @@ public class ActivitiGroupManager extends GroupEntityManager {
 
 	private IAuthorizationService authorizationService;
 	private IAuthenticationService authenticationService;
-	private ILiferayToActivityRoleConverter liferayToActivityConverter;
+	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 
 	public ActivitiGroupManager(IAuthorizationService authorizationService,
-			IAuthenticationService authenticationService, ILiferayToActivityRoleConverter liferayToActivityConverter) {
+			IAuthenticationService authenticationService, ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
 		this.liferayToActivityConverter = liferayToActivityConverter;
 	}
 
-	public static GroupEntity getActivitiGroup(Role liferayRole, ILiferayToActivityRoleConverter liferayToActivity) {
+	public static GroupEntity getActivitiGroup(Role liferayRole, ILiferayGroupToActivityRoleConverter liferayToActivity) {
 		GroupEntity activitiGroup = new GroupEntity();
 		activitiGroup.setName(liferayRole.getName());
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());

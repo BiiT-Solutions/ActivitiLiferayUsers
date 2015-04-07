@@ -15,7 +15,7 @@ import org.activiti.engine.impl.persistence.entity.UserEntityManager;
 import org.springframework.util.StringUtils;
 
 import com.biit.activiti.groups.ActivitiGroupManager;
-import com.biit.activiti.groups.ILiferayToActivityRoleConverter;
+import com.biit.activiti.groups.ILiferayGroupToActivityRoleConverter;
 import com.biit.activiti.logger.ActivitiUsersLogger;
 import com.biit.liferay.access.exceptions.AuthenticationRequired;
 import com.biit.liferay.access.exceptions.NotConnectedToWebServiceException;
@@ -33,10 +33,10 @@ import com.liferay.portal.model.User;
 public class ActivitiUserManager extends UserEntityManager {
 	private IAuthorizationService authorizationService;
 	private IAuthenticationService authenticationService;
-	private ILiferayToActivityRoleConverter liferayToActivityConverter;
+	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 
 	public ActivitiUserManager(IAuthorizationService authorizationService,
-			IAuthenticationService authenticationService, ILiferayToActivityRoleConverter liferayToActivityConverter) {
+			IAuthenticationService authenticationService, ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
 		this.liferayToActivityConverter = liferayToActivityConverter;

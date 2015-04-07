@@ -17,7 +17,7 @@ public class ActivitiGroupManagerFactory implements SessionFactory {
 	@Autowired
 	private IAuthenticationService authenticationService;
 	@Autowired
-	private ILiferayToActivityRoleConverter liferayToActivityConverter;
+	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 
 	@Override
 	public Class<?> getSessionType() {
