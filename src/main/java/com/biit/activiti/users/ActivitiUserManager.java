@@ -12,8 +12,6 @@ import org.activiti.engine.impl.UserQueryImpl;
 import org.activiti.engine.impl.persistence.entity.IdentityInfoEntity;
 import org.activiti.engine.impl.persistence.entity.UserEntity;
 import org.activiti.engine.impl.persistence.entity.UserEntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.biit.activiti.groups.ActivitiGroupManager;
@@ -32,16 +30,22 @@ import com.liferay.portal.model.User;
 /**
  * Allows the use of Liferay User in Activiti.
  */
-@Component
 public class ActivitiUserManager extends UserEntityManager {
-	@Autowired
 	private IAuthorizationService authorizationService;
-	@Autowired
 	private IAuthenticationService authenticationService;
-	@Autowired
 	private ILiferayToActivityRoleConverter liferayToActivityConverter;
 
+	public ActivitiUserManager(IAuthorizationService authorizationService,
+			IAuthenticationService authenticationService, ILiferayToActivityRoleConverter liferayToActivityConverter) {
+		this.authorizationService = authorizationService;
+		this.authenticationService = authenticationService;
+		this.liferayToActivityConverter = liferayToActivityConverter;
+	}
+
 	public static UserEntity getActivitiUser(User liferayUser) {
+		if (liferayUser == null) {
+			return null;
+		}
 		UserEntity activitiUser = new UserEntity();
 		activitiUser.setEmail(liferayUser.getEmailAddress());
 		activitiUser.setFirstName(liferayUser.getFirstName());
@@ -61,6 +65,7 @@ public class ActivitiUserManager extends UserEntityManager {
 			return getActivitiUser(liferayUser);
 		} catch (NumberFormatException | NotConnectedToWebServiceException | UserDoesNotExistException | IOException
 				| AuthenticationRequired | WebServiceAccessError e) {
+			e.printStackTrace();
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return null;

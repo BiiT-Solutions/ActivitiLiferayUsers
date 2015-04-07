@@ -10,8 +10,6 @@ import org.activiti.engine.impl.GroupQueryImpl;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.persistence.entity.GroupEntity;
 import org.activiti.engine.impl.persistence.entity.GroupEntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.biit.activiti.logger.ActivitiUsersLogger;
 import com.biit.liferay.access.exceptions.AuthenticationRequired;
@@ -23,15 +21,21 @@ import com.biit.liferay.security.IAuthorizationService;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.User;
 
-@Component
+/**
+ * Allows the use of Liferay Roles as Activiti groups.
+ */
 public class ActivitiGroupManager extends GroupEntityManager {
 
-	@Autowired
 	private IAuthorizationService authorizationService;
-	@Autowired
 	private IAuthenticationService authenticationService;
-	@Autowired
 	private ILiferayToActivityRoleConverter liferayToActivityConverter;
+
+	public ActivitiGroupManager(IAuthorizationService authorizationService,
+			IAuthenticationService authenticationService, ILiferayToActivityRoleConverter liferayToActivityConverter) {
+		this.authorizationService = authorizationService;
+		this.authenticationService = authenticationService;
+		this.liferayToActivityConverter = liferayToActivityConverter;
+	}
 
 	public static GroupEntity getActivitiGroup(Role liferayRole, ILiferayToActivityRoleConverter liferayToActivity) {
 		GroupEntity activitiGroup = new GroupEntity();

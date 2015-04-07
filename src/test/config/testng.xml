@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="1" verbose="1" name="ActivitiTest">
+	<test name="ActivitiTest" enabled="true" preserve-order="true">
+		<groups>
+			<run>
+				<include name="activitiTasks" />
+				<include name="activitiGroupTasks" />
+				<include name="activitiUsers" />
+			</run>
+		</groups>
+		<classes>
+			<class name="com.biit.activiti.tests.SimpleProcessTest" />
+			<class name="com.biit.activiti.tests.ActivitiUsersTest" />
+			<class name="com.biit.activiti.tests.GroupProcessTest" />
+		</classes>
+	</test>
+</suite>
