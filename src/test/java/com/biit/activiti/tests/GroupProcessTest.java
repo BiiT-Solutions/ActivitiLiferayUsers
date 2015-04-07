@@ -1,7 +1,6 @@
 package com.biit.activiti.tests;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.ProcessEngine;
@@ -23,13 +22,9 @@ import org.testng.annotations.Test;
 @ContextConfiguration({ "classpath:applicationContext.xml" })
 @Test(groups = "activitiGroupTasks")
 public class GroupProcessTest extends AbstractTransactionalTestNGSpringContextTests {
-	private static final String ONE_TASK_PROCESS_NAME = "oneTaskProcess";
 	private static final String HOLIDAY_PROCESS_NAME = "HolidayRequest";
-	private static final String HOLIDAY_PROCESS_APPROVE_TASK_NAME = "Approve Request";
-	private static final String HOLIDAY_PROCESS_APPROVE_TASK_2_NAME = "Send Request Approved";
 	private static final String HOLIDAY_PROCESS_APPROVE_TASK_USER = "kermit";
 	private static final String HOLIDAY_PROCESS_APPROVE_TASK_GROUP = "management";
-	private static final String HOLIDAY_PROCESS_APPROVE_TASK_USER2 = "fozzie";
 
 	@Autowired
 	private ProcessEngine processEngine;
