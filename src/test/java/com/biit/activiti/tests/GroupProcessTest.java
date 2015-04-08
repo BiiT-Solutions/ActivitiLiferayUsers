@@ -93,7 +93,7 @@ public class GroupProcessTest extends AbstractTransactionalTestNGSpringContextTe
 	/**
 	 * This task has two user actions. Assign and resolve both of them.
 	 */
-	@Test(dependsOnMethods = { "holidayRequestsManualTask" }, enabled = false)
+	@Test(dependsOnMethods = { "holidayRequestsManualTask" })
 	@Rollback(value = false)
 	public void assignFirstTaskToGroup() {
 		TaskService taskService = processEngine.getTaskService();
