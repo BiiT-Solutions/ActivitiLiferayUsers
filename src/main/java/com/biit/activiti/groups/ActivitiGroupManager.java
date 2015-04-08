@@ -41,7 +41,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 
 	public static GroupEntity getActivitiGroup(Role liferayRole, ILiferayGroupToActivityRoleConverter liferayToActivity) {
 		GroupEntity activitiGroup = new GroupEntity();
-		activitiGroup.setName(liferayRole.getName());
+		activitiGroup.setName(liferayToActivity.getGroupName(liferayRole));
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());
 		activitiGroup.setId(liferayRole.getRoleId() + "");
 		activitiGroup.setRevision(0);
@@ -113,7 +113,8 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		}
 		if (!StringUtils.isEmpty(groupQuery.getName())) {
 			try {
-				groupList.add(getActivitiGroup(authorizationService.getRole(groupQuery.getName()),
+				groupList.add(getActivitiGroup(
+						authorizationService.getRole(liferayToActivityConverter.getRoleName(groupQuery.getName())),
 						liferayToActivityConverter));
 			} catch (IOException | AuthenticationRequired e) {
 				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);

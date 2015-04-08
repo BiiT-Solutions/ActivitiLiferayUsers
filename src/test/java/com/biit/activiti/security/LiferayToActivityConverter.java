@@ -51,4 +51,14 @@ public class LiferayToActivityConverter implements ILiferayGroupToActivityRoleCo
 		return roles;
 	}
 
+	@Override
+	public String getGroupName(Role liferayRole) {
+		return liferayRole.getName();
+	}
+
+	@Override
+	public String getRoleName(String activitiGroupName) {
+		return activitiGroupName;
+	}
+
 }
