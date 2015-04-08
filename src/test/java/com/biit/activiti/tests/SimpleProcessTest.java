@@ -109,7 +109,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 	 */
 	@Test
 	@Deployment(resources = { "process/holidayRequest.bpmn20.xml" })
-	@Rollback(value=false)
+	@Rollback(value = false)
 	public void holidayRequestsAutomaticAnswer() {
 		Assert.assertNotNull(processEngine);
 		RuntimeService runtimeService = processEngine.getRuntimeService();

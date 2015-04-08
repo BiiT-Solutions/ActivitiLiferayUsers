@@ -16,4 +16,13 @@ public enum GroupType {
 		return type;
 	}
 
+	public static GroupType getGroupType(String type) {
+		for (GroupType groupType : GroupType.values()) {
+			if (groupType.getType().equals(type)) {
+				return groupType;
+			}
+		}
+		return null;
+	}
+
 }

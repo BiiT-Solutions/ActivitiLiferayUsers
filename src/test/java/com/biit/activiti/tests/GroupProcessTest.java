@@ -3,9 +3,12 @@ package com.biit.activiti.tests;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.identity.Group;
+import org.activiti.engine.identity.User;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.test.Deployment;
@@ -23,13 +26,44 @@ import org.testng.annotations.Test;
 @Test(groups = "activitiGroupTasks")
 public class GroupProcessTest extends AbstractTransactionalTestNGSpringContextTests {
 	private static final String HOLIDAY_PROCESS_NAME = "HolidayRequest";
-	private static final String HOLIDAY_PROCESS_APPROVE_TASK_USER = "kermit";
-	private static final String HOLIDAY_PROCESS_APPROVE_TASK_GROUP = "management";
+	private static final String HOLIDAY_PROCESS_APPROVE_TASK_USER = "sam@test.com";
+	private static final String HOLIDAY_PROCESS_APPROVE_TASK_GROUP = "usmo_physiotherapist";
 
 	@Autowired
 	private ProcessEngine processEngine;
 
 	private String holidayRequestId;
+
+	/**
+	 * Create user.
+	 */
+	@Test(enabled = false)
+	@Rollback(value = false)
+	private void createUser() {
+		IdentityService identityService = processEngine.getIdentityService();
+
+		User user = identityService.newUser(HOLIDAY_PROCESS_APPROVE_TASK_USER);
+		user.setEmail("kermit@sessam.com");
+		user.setFirstName(HOLIDAY_PROCESS_APPROVE_TASK_USER);
+		user.setLastName("The Frog");
+		user.setPassword("123");
+		identityService.saveUser(user);
+	}
+
+	/**
+	 * Assign user to group.
+	 */
+	@Test(enabled = false, dependsOnMethods = "createUser")
+	@Rollback(value = false)
+	public void addUserToGroup() {
+		IdentityService identityService = processEngine.getIdentityService();
+		Group group = identityService.newGroup(HOLIDAY_PROCESS_APPROVE_TASK_GROUP);
+		group.setName(HOLIDAY_PROCESS_APPROVE_TASK_GROUP);
+
+		identityService.saveGroup(group);
+
+		identityService.createMembership(HOLIDAY_PROCESS_APPROVE_TASK_USER, HOLIDAY_PROCESS_APPROVE_TASK_GROUP);
+	}
 
 	/**
 	 * Holidays with more than 2 days, needs human approval.
@@ -59,7 +93,7 @@ public class GroupProcessTest extends AbstractTransactionalTestNGSpringContextTe
 	/**
 	 * This task has two user actions. Assign and resolve both of them.
 	 */
-	@Test(dependsOnMethods = { "holidayRequestsManualTask" })
+	@Test(dependsOnMethods = { "holidayRequestsManualTask" }, enabled = false)
 	@Rollback(value = false)
 	public void assignFirstTaskToGroup() {
 		TaskService taskService = processEngine.getTaskService();
@@ -70,9 +104,14 @@ public class GroupProcessTest extends AbstractTransactionalTestNGSpringContextTe
 
 		Task requestApproval = taskService.createTaskQuery().processInstanceId(holidayRequestId).list().get(0);
 		Assert.assertEquals(0, taskService.createTaskQuery().taskAssignee(HOLIDAY_PROCESS_APPROVE_TASK_USER).count());
+
+		// Assign task to group
 		taskService.addCandidateGroup(requestApproval.getId(), HOLIDAY_PROCESS_APPROVE_TASK_GROUP);
 		Assert.assertEquals(1, taskService.createTaskQuery().taskCandidateGroup(HOLIDAY_PROCESS_APPROVE_TASK_GROUP)
 				.count());
-	}
 
+		// Check karmit has the task.
+		Assert.assertEquals(1, taskService.createTaskQuery().taskCandidateUser(HOLIDAY_PROCESS_APPROVE_TASK_USER)
+				.count());
+	}
 }

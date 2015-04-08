@@ -10,6 +10,7 @@ import org.activiti.engine.impl.GroupQueryImpl;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.persistence.entity.GroupEntity;
 import org.activiti.engine.impl.persistence.entity.GroupEntityManager;
+import org.springframework.util.StringUtils;
 
 import com.biit.activiti.logger.ActivitiUsersLogger;
 import com.biit.liferay.access.exceptions.AuthenticationRequired;
@@ -31,7 +32,8 @@ public class ActivitiGroupManager extends GroupEntityManager {
 	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 
 	public ActivitiGroupManager(IAuthorizationService authorizationService,
-			IAuthenticationService authenticationService, ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
+			IAuthenticationService authenticationService,
+			ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
 		this.liferayToActivityConverter = liferayToActivityConverter;
@@ -45,6 +47,17 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		activitiGroup.setRevision(0);
 
 		return activitiGroup;
+	}
+
+	public GroupEntity findGroupById(String roleId) {
+		try {
+			Role liferayUser = authorizationService.getRole(Long.parseLong(roleId));
+			return getActivitiGroup(liferayUser, liferayToActivityConverter);
+		} catch (NumberFormatException | IOException | AuthenticationRequired e) {
+			e.printStackTrace();
+			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
+		}
+		return null;
 	}
 
 	@Override
@@ -92,12 +105,41 @@ public class ActivitiGroupManager extends GroupEntityManager {
 
 	@Override
 	public List<org.activiti.engine.identity.Group> findGroupByQueryCriteria(GroupQueryImpl query, Page page) {
-		throw new UnsupportedOperationException();
+		List<org.activiti.engine.identity.Group> groupList = new ArrayList<org.activiti.engine.identity.Group>();
+		GroupQueryImpl groupQuery = (GroupQueryImpl) query;
+		if (!StringUtils.isEmpty(groupQuery.getId())) {
+			groupList.add(findGroupById(groupQuery.getId()));
+			return groupList;
+		}
+		if (!StringUtils.isEmpty(groupQuery.getName())) {
+			try {
+				groupList.add(getActivitiGroup(authorizationService.getRole(groupQuery.getName()),
+						liferayToActivityConverter));
+			} catch (IOException | AuthenticationRequired e) {
+				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
+			}
+			return groupList;
+		} else if (!StringUtils.isEmpty(groupQuery.getUserId())) {
+			groupList.addAll(findGroupsByUser(groupQuery.getUserId()));
+			return groupList;
+		} else if (!StringUtils.isEmpty(groupQuery.getType())) {
+			Set<Role> roles = liferayToActivityConverter.getRoles(GroupType.getGroupType(groupQuery.getType()));
+			for (Role role : roles) {
+				groupList.add(getActivitiGroup(role, liferayToActivityConverter));
+			}
+			return groupList;
+		} else {
+			Set<Role> liferayRoles = liferayToActivityConverter.getAllRoles();
+			for (Role liferayRole : liferayRoles) {
+				groupList.add(getActivitiGroup(liferayRole, liferayToActivityConverter));
+			}
+			return groupList;
+		}
 	}
 
 	@Override
 	public long findGroupCountByQueryCriteria(GroupQueryImpl query) {
-		throw new UnsupportedOperationException();
+		return findGroupByQueryCriteria(query, null).size();
 	}
 
 	@Override
