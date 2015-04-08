@@ -6,7 +6,7 @@
 	<groupId>com.biit</groupId>
 	<artifactId>activiti-liferay-users</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.0</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<name>Liferay users in Activiti</name>
 
 
@@ -47,6 +47,7 @@
 		<ehcache.version>2.6.9</ehcache.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<slf4j-log4j12.version>1.7.7</slf4j-log4j12.version>
+		<maven-release-plugin.version>2.5.1</maven-release-plugin.version>
 		<maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
 		<project.scm.id>git</project.scm.id>
 	</properties>
