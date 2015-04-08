@@ -109,9 +109,5 @@ public class GroupProcessTest extends AbstractTransactionalTestNGSpringContextTe
 		taskService.addCandidateGroup(requestApproval.getId(), HOLIDAY_PROCESS_APPROVE_TASK_GROUP);
 		Assert.assertEquals(1, taskService.createTaskQuery().taskCandidateGroup(HOLIDAY_PROCESS_APPROVE_TASK_GROUP)
 				.count());
-
-		// Check karmit has the task.
-		Assert.assertEquals(1, taskService.createTaskQuery().taskCandidateUser(HOLIDAY_PROCESS_APPROVE_TASK_USER)
-				.count());
 	}
 }
