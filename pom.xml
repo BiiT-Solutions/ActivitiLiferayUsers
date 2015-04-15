@@ -5,7 +5,7 @@
 	<groupId>com.biit</groupId>
 	<artifactId>activiti-liferay-users</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.5-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<name>Liferay users in Activiti</name>
 
 
@@ -35,7 +35,7 @@
 		<maven-surefire.version>2.17</maven-surefire.version>
 		<org.testng.version>6.8.7</org.testng.version>
 		<log4j.version>1.2.17</log4j.version>
-		<liferay-authentication-client.version>[0.5,0.6)</liferay-authentication-client.version>
+		<liferay-authentication-client.version>[0.6,0.7)</liferay-authentication-client.version>
 		<maven-release-plugin.version>2.5.1</maven-release-plugin.version>
 		<activiti.version>5.16.1</activiti.version>
 		<org.springframework.version>4.1.5.RELEASE</org.springframework.version>

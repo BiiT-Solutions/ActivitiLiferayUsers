@@ -2,19 +2,17 @@ package com.biit.activiti.logger;
 
 import org.apache.log4j.Logger;
 
-import com.biit.logger.BiitLogger;
+import com.biit.logger.LoggerUtils;
 
-public class ActivitiUsersLogger extends BiitLogger {
-	static {
-		setLogger(Logger.getLogger(new Object() {
-		}.getClass().getEnclosingClass()));
-	}
-
+public class ActivitiUsersLogger{
+	
+	private static Logger logger = Logger.getLogger(ActivitiUsersLogger.class);
+	
 	/**
 	 * Events that have business meaning (i.e. creating category, deleting form, ...). To follow user actions.
 	 */
 	public static void info(String className, String message) {
-		info(className + ": " + message);
+		LoggerUtils.info(logger, className, message);
 	}
 
 	/**
@@ -23,7 +21,7 @@ public class ActivitiUsersLogger extends BiitLogger {
 	 * @param message
 	 */
 	public static void warning(String className, String message) {
-		warning(className + ": " + message);
+		LoggerUtils.warning(logger, className + ": " + message);
 	}
 
 	/**
@@ -31,7 +29,7 @@ public class ActivitiUsersLogger extends BiitLogger {
 	 * connection, etc.
 	 */
 	public static void debug(String className, String message) {
-		debug(className + ": " + message);
+		LoggerUtils.debug(logger, className, message);
 	}
 
 	/**
@@ -40,7 +38,7 @@ public class ActivitiUsersLogger extends BiitLogger {
 	 * @param message
 	 */
 	public static void severe(String className, String message) {
-		severe(className + ": " + message);
+		LoggerUtils.severe(logger, className, message);
 	}
 
 	/**
@@ -51,8 +49,7 @@ public class ActivitiUsersLogger extends BiitLogger {
 	 * @param throwable
 	 */
 	public static void errorMessage(String className, Throwable throwable) {
-		String error = getStackTrace(throwable);
-		errorMessageNotification(className, error);
+		LoggerUtils.errorMessageNotification(logger, className, LoggerUtils.getStackTrace(throwable));
 	}
 
 }
