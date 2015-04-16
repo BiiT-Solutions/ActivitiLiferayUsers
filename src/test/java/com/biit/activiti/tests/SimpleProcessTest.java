@@ -66,7 +66,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 
 		// Get the first task
 		TaskService taskService = processEngine.getTaskService();
-		List<Task> tasks = taskService.createTaskQuery().processInstanceId(holidayRequestId).list();
+		List<Task> tasks = taskService.createTaskQuery().processInstanceId(procId).list();
 		for (Task task : tasks) {
 			// claim it
 			taskService.claim(task.getId(), HOLIDAY_PROCESS_APPROVE_TASK_USER2);
@@ -84,7 +84,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 		Assert.assertEquals(0, taskService.createTaskQuery().taskAssignee(HOLIDAY_PROCESS_APPROVE_TASK_USER2).count());
 
 		// Retrieve and claim the second task
-		tasks = taskService.createTaskQuery().processInstanceId(holidayRequestId).list();
+		tasks = taskService.createTaskQuery().processInstanceId(procId).list();
 		for (Task task : tasks) {
 			taskService.claim(task.getId(), HOLIDAY_PROCESS_APPROVE_TASK_USER);
 		}
