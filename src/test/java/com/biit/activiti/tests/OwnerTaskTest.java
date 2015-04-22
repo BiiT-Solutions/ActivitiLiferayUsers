@@ -65,7 +65,8 @@ public class OwnerTaskTest extends AbstractTransactionalTestNGSpringContextTests
 	}
 
 	/**
-	 * One process instances would have an owner, the other not.
+	 * One process instances would have an owner, the other not. The owner is assigned to a task, therefore next tasks
+	 * of a process will lose the task.
 	 */
 	@Test(dependsOnMethods = { "startThreeProcess" })
 	@Rollback(value = false)

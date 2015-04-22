@@ -7,6 +7,8 @@
 				<include name="activitiGroupTasks" />
 				<include name="activitiUsers" />
 				<include name="ownerTasks" />
+				<include name="tenancy" />
+				<include name="tenancyAsVariable" />
 			</run>
 		</groups>
 		<classes>
@@ -14,6 +16,8 @@
 			<class name="com.biit.activiti.tests.ActivitiUsersTest" />
 			<class name="com.biit.activiti.tests.GroupProcessTest" />
 			<class name="com.biit.activiti.tests.OwnerTaskTest" />
+			<class name="com.biit.activiti.tests.TenancyTest" />
+			<class name="com.biit.activiti.tests.TenancyAsVariableTest" />
 		</classes>
 	</test>
 </suite>
