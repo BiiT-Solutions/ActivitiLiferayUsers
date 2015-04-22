@@ -6,12 +6,14 @@
 				<include name="activitiTasks" />
 				<include name="activitiGroupTasks" />
 				<include name="activitiUsers" />
+				<include name="ownerTasks" />
 			</run>
 		</groups>
 		<classes>
 			<class name="com.biit.activiti.tests.SimpleProcessTest" />
 			<class name="com.biit.activiti.tests.ActivitiUsersTest" />
 			<class name="com.biit.activiti.tests.GroupProcessTest" />
+			<class name="com.biit.activiti.tests.OwnerTaskTest" />
 		</classes>
 	</test>
 </suite>
