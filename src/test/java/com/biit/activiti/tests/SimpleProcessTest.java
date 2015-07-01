@@ -62,6 +62,21 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 		variables.put("days", 4);
 		variables.put("eMail", "dummy@biit-solutions.com");
 		variables.put("startDate", "01-01-2020");
+
+		// Get all available deployed process and select the correct one.
+		// List<org.activiti.engine.repository.Deployment> processesDeployed = processEngine.getRepositoryService()
+		// .createDeploymentQuery().list();
+		// org.activiti.engine.repository.Deployment deploymentToStart = null;
+		// for (org.activiti.engine.repository.Deployment deployment : processesDeployed) {
+		// if (deployment.getName().equals(HOLIDAY_PROCESS_NAME)) {
+		// deploymentToStart = deployment;
+		// }
+		// }
+		//
+		// Assert.assertNotNull(deploymentToStart);
+		// String procId = runtimeService.startProcessInstanceById(deploymentToStart.getId(), variables).getId();
+
+		// Other simple way to start the process.
 		String procId = runtimeService.startProcessInstanceByKey(HOLIDAY_PROCESS_NAME, variables).getId();
 
 		// Get the first task
