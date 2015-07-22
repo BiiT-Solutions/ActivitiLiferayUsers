@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.biit.activiti.groups.ILiferayGroupToActivityRoleConverter;
-import com.biit.liferay.security.IAuthenticationService;
-import com.biit.liferay.security.IAuthorizationService;
+import com.biit.usermanager.security.IAuthenticationService;
+import com.biit.usermanager.security.IAuthorizationService;
 
 @Service
 public class ActivitiUserManagerFactory implements SessionFactory {
 
 	@Autowired
-	private IAuthorizationService authorizationService;
+	private IAuthorizationService<Long, Long, Long> authorizationService;
 	@Autowired
-	private IAuthenticationService authenticationService;
+	private IAuthenticationService<Long, Long> authenticationService;
 	@Autowired
 	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 

@@ -2,7 +2,7 @@ package com.biit.activiti.groups;
 
 import java.util.Set;
 
-import com.liferay.portal.model.Role;
+import com.biit.usermanager.entity.IRole;
 
 /**
  * This class must translate from Liferay Roles to Activiti groups.
@@ -15,7 +15,7 @@ public interface ILiferayGroupToActivityRoleConverter {
 	 * @param liferayRole
 	 * @return
 	 */
-	GroupType getActivitiGroup(Role liferayRole);
+	GroupType getActivitiGroup(IRole<Long> liferayRole);
 
 	/**
 	 * Creates a unique group name from a Liferay role. This can be the role name, or in the case of multitenancy, a
@@ -24,7 +24,7 @@ public interface ILiferayGroupToActivityRoleConverter {
 	 * @param liferayRole
 	 * @return
 	 */
-	String getGroupName(Role liferayRole);
+	String getGroupName(IRole<Long> liferayRole);
 
 	/**
 	 * Gets the Liferay equivalence role from an Activiti group. Must exactly do the inverse process of
@@ -40,7 +40,7 @@ public interface ILiferayGroupToActivityRoleConverter {
 	 * 
 	 * @return
 	 */
-	Set<Role> getAllRoles();
+	Set<IRole<Long>> getAllRoles();
 
 	/**
 	 * Gets all available roles from Liferay that are related to an Activiti GroupType. The list only must include all
@@ -49,6 +49,6 @@ public interface ILiferayGroupToActivityRoleConverter {
 	 * @param type
 	 * @return
 	 */
-	Set<Role> getRoles(GroupType type);
+	Set<IRole<Long>> getRoles(GroupType type);
 
 }

@@ -6,16 +6,16 @@ import org.activiti.engine.impl.persistence.entity.GroupIdentityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.biit.liferay.security.IAuthenticationService;
-import com.biit.liferay.security.IAuthorizationService;
+import com.biit.usermanager.security.IAuthenticationService;
+import com.biit.usermanager.security.IAuthorizationService;
 
 @Service
 public class ActivitiGroupManagerFactory implements SessionFactory {
 
 	@Autowired
-	private IAuthorizationService authorizationService;
+	private IAuthorizationService<Long, Long, Long> authorizationService;
 	@Autowired
-	private IAuthenticationService authenticationService;
+	private IAuthenticationService<Long, Long> authenticationService;
 	@Autowired
 	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 

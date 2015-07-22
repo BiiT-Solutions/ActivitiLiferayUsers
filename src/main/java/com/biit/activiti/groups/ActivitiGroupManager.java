@@ -1,6 +1,5 @@
 package com.biit.activiti.groups;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,37 +12,35 @@ import org.activiti.engine.impl.persistence.entity.GroupEntityManager;
 import org.springframework.util.StringUtils;
 
 import com.biit.activiti.logger.ActivitiUsersLogger;
-import com.biit.liferay.access.exceptions.AuthenticationRequired;
-import com.biit.liferay.access.exceptions.NotConnectedToWebServiceException;
-import com.biit.liferay.access.exceptions.UserDoesNotExistException;
-import com.biit.liferay.access.exceptions.WebServiceAccessError;
-import com.biit.liferay.security.IAuthenticationService;
-import com.biit.liferay.security.IAuthorizationService;
-import com.liferay.portal.model.Role;
-import com.liferay.portal.model.User;
+import com.biit.usermanager.entity.IRole;
+import com.biit.usermanager.entity.IUser;
+import com.biit.usermanager.security.IAuthenticationService;
+import com.biit.usermanager.security.IAuthorizationService;
+import com.biit.usermanager.security.exceptions.UserManagementException;
 
 /**
  * Allows the use of Liferay Roles as Activiti groups.
  */
 public class ActivitiGroupManager extends GroupEntityManager {
 
-	private IAuthorizationService authorizationService;
-	private IAuthenticationService authenticationService;
+	private IAuthorizationService<Long, Long, Long> authorizationService;
+	private IAuthenticationService<Long, Long> authenticationService;
 	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 
-	public ActivitiGroupManager(IAuthorizationService authorizationService,
-			IAuthenticationService authenticationService,
+	public ActivitiGroupManager(IAuthorizationService<Long, Long, Long> authorizationService,
+			IAuthenticationService<Long, Long> authenticationService,
 			ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
 		this.liferayToActivityConverter = liferayToActivityConverter;
 	}
 
-	public static GroupEntity getActivitiGroup(Role liferayRole, ILiferayGroupToActivityRoleConverter liferayToActivity) {
+	public static GroupEntity getActivitiGroup(IRole<Long> liferayRole,
+			ILiferayGroupToActivityRoleConverter liferayToActivity) {
 		GroupEntity activitiGroup = new GroupEntity();
 		activitiGroup.setName(liferayToActivity.getGroupName(liferayRole));
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());
-		activitiGroup.setId(liferayRole.getRoleId() + "");
+		activitiGroup.setId(liferayRole.getId() + "");
 		activitiGroup.setRevision(0);
 
 		return activitiGroup;
@@ -51,9 +48,9 @@ public class ActivitiGroupManager extends GroupEntityManager {
 
 	public GroupEntity findGroupById(String roleId) {
 		try {
-			Role liferayUser = authorizationService.getRole(Long.parseLong(roleId));
+			IRole<Long> liferayUser = authorizationService.getRole(Long.parseLong(roleId));
 			return getActivitiGroup(liferayUser, liferayToActivityConverter);
-		} catch (NumberFormatException | IOException | AuthenticationRequired e) {
+		} catch (NumberFormatException | UserManagementException e) {
 			e.printStackTrace();
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
@@ -64,15 +61,14 @@ public class ActivitiGroupManager extends GroupEntityManager {
 	public List<org.activiti.engine.identity.Group> findGroupsByUser(String userId) {
 		List<org.activiti.engine.identity.Group> activitiGroups = new ArrayList<>();
 
-		User liferayUser;
+		IUser<Long> liferayUser;
 		try {
 			liferayUser = authenticationService.getUserById(Long.parseLong(userId));
-			Set<Role> liferayRoles = authorizationService.getUserRoles(liferayUser);
-			for (Role liferayRole : liferayRoles) {
+			Set<IRole<Long>> liferayRoles = authorizationService.getUserRoles(liferayUser);
+			for (IRole<Long> liferayRole : liferayRoles) {
 				activitiGroups.add(ActivitiGroupManager.getActivitiGroup(liferayRole, liferayToActivityConverter));
 			}
-		} catch (NumberFormatException | NotConnectedToWebServiceException | UserDoesNotExistException | IOException
-				| AuthenticationRequired | WebServiceAccessError e) {
+		} catch (NumberFormatException | UserManagementException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return activitiGroups;
@@ -116,7 +112,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 				groupList.add(getActivitiGroup(
 						authorizationService.getRole(liferayToActivityConverter.getRoleName(groupQuery.getName())),
 						liferayToActivityConverter));
-			} catch (IOException | AuthenticationRequired e) {
+			} catch (UserManagementException e) {
 				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 			}
 			return groupList;
@@ -124,14 +120,14 @@ public class ActivitiGroupManager extends GroupEntityManager {
 			groupList.addAll(findGroupsByUser(groupQuery.getUserId()));
 			return groupList;
 		} else if (!StringUtils.isEmpty(groupQuery.getType())) {
-			Set<Role> roles = liferayToActivityConverter.getRoles(GroupType.getGroupType(groupQuery.getType()));
-			for (Role role : roles) {
+			Set<IRole<Long>> roles = liferayToActivityConverter.getRoles(GroupType.getGroupType(groupQuery.getType()));
+			for (IRole<Long> role : roles) {
 				groupList.add(getActivitiGroup(role, liferayToActivityConverter));
 			}
 			return groupList;
 		} else {
-			Set<Role> liferayRoles = liferayToActivityConverter.getAllRoles();
-			for (Role liferayRole : liferayRoles) {
+			Set<IRole<Long>> liferayRoles = liferayToActivityConverter.getAllRoles();
+			for (IRole<Long> liferayRole : liferayRoles) {
 				groupList.add(getActivitiGroup(liferayRole, liferayToActivityConverter));
 			}
 			return groupList;
@@ -148,11 +144,11 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		return false;
 	}
 
-	public IAuthorizationService getAuthorizationService() {
+	public IAuthorizationService<Long, Long, Long> getAuthorizationService() {
 		return authorizationService;
 	}
 
-	public void setAuthorizationService(IAuthorizationService authorizationService) {
+	public void setAuthorizationService(IAuthorizationService<Long, Long, Long> authorizationService) {
 		this.authorizationService = authorizationService;
 	}
 

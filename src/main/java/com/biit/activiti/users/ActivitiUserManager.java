@@ -1,6 +1,5 @@
 package com.biit.activiti.users;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,29 +16,36 @@ import org.springframework.util.StringUtils;
 import com.biit.activiti.groups.ActivitiGroupManager;
 import com.biit.activiti.groups.ILiferayGroupToActivityRoleConverter;
 import com.biit.activiti.logger.ActivitiUsersLogger;
-import com.biit.liferay.access.exceptions.AuthenticationRequired;
-import com.biit.liferay.access.exceptions.NotConnectedToWebServiceException;
-import com.biit.liferay.access.exceptions.UserDoesNotExistException;
-import com.biit.liferay.access.exceptions.WebServiceAccessError;
-import com.biit.liferay.security.IAuthenticationService;
-import com.biit.liferay.security.IAuthorizationService;
-import com.biit.liferay.security.exceptions.InvalidCredentialsException;
-import com.liferay.portal.model.Role;
+import com.biit.usermanager.entity.IRole;
+import com.biit.usermanager.entity.IUser;
+import com.biit.usermanager.security.IAuthenticationService;
+import com.biit.usermanager.security.IAuthorizationService;
+import com.biit.usermanager.security.exceptions.AuthenticationRequired;
+import com.biit.usermanager.security.exceptions.InvalidCredentialsException;
+import com.biit.usermanager.security.exceptions.UserManagementException;
 import com.liferay.portal.model.User;
 
 /**
  * Allows the use of Liferay User in Activiti.
  */
 public class ActivitiUserManager extends UserEntityManager {
-	private IAuthorizationService authorizationService;
-	private IAuthenticationService authenticationService;
+	private IAuthorizationService<Long, Long, Long> authorizationService;
+	private IAuthenticationService<Long, Long> authenticationService;
 	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
 
-	public ActivitiUserManager(IAuthorizationService authorizationService,
-			IAuthenticationService authenticationService, ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
+	public ActivitiUserManager(IAuthorizationService<Long, Long, Long> authorizationService,
+			IAuthenticationService<Long, Long> authenticationService,
+			ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
 		this.liferayToActivityConverter = liferayToActivityConverter;
+	}
+
+	public static UserEntity getActivitiUser(IUser<Long> liferayUser) {
+		if (liferayUser instanceof User) {
+			return getActivitiUser((User) liferayUser);
+		}
+		return null;
 	}
 
 	public static UserEntity getActivitiUser(User liferayUser) {
@@ -49,7 +55,7 @@ public class ActivitiUserManager extends UserEntityManager {
 		UserEntity activitiUser = new UserEntity();
 		activitiUser.setEmail(liferayUser.getEmailAddress());
 		activitiUser.setFirstName(liferayUser.getFirstName());
-		activitiUser.setId(liferayUser.getUserId() + "");
+		activitiUser.setId(liferayUser.getId() + "");
 		activitiUser.setLastName(liferayUser.getLastName());
 		activitiUser.setPassword(liferayUser.getPassword());
 		activitiUser.setPicture(new Picture(null, null));
@@ -61,10 +67,9 @@ public class ActivitiUserManager extends UserEntityManager {
 	@Override
 	public UserEntity findUserById(String userId) {
 		try {
-			User liferayUser = authenticationService.getUserById(Long.parseLong(userId));
+			IUser<Long> liferayUser = authenticationService.getUserById(Long.parseLong(userId));
 			return getActivitiUser(liferayUser);
-		} catch (NumberFormatException | NotConnectedToWebServiceException | UserDoesNotExistException | IOException
-				| AuthenticationRequired | WebServiceAccessError e) {
+		} catch (NumberFormatException | UserManagementException e) {
 			e.printStackTrace();
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
@@ -73,10 +78,9 @@ public class ActivitiUserManager extends UserEntityManager {
 
 	private UserEntity findUserByEmail(String userEmail) {
 		try {
-			User liferayUser = authenticationService.getUserByEmail(userEmail);
+			IUser<Long> liferayUser = authenticationService.getUserByEmail(userEmail);
 			return getActivitiUser(liferayUser);
-		} catch (NumberFormatException | NotConnectedToWebServiceException | UserDoesNotExistException | IOException
-				| AuthenticationRequired | WebServiceAccessError e) {
+		} catch (NumberFormatException | UserManagementException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return null;
@@ -91,15 +95,14 @@ public class ActivitiUserManager extends UserEntityManager {
 	public List<org.activiti.engine.identity.Group> findGroupsByUser(String userId) {
 		List<org.activiti.engine.identity.Group> activitiGroups = new ArrayList<>();
 
-		User liferayUser;
+		IUser<Long> liferayUser;
 		try {
 			liferayUser = authenticationService.getUserById(Long.parseLong(userId));
-			Set<Role> liferayRoles = authorizationService.getUserRoles(liferayUser);
-			for (Role liferayRole : liferayRoles) {
+			Set<IRole<Long>> liferayRoles = authorizationService.getUserRoles(liferayUser);
+			for (IRole<Long> liferayRole : liferayRoles) {
 				activitiGroups.add(ActivitiGroupManager.getActivitiGroup(liferayRole, liferayToActivityConverter));
 			}
-		} catch (NumberFormatException | NotConnectedToWebServiceException | UserDoesNotExistException | IOException
-				| AuthenticationRequired | WebServiceAccessError e) {
+		} catch (NumberFormatException | UserManagementException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return activitiGroups;
@@ -107,12 +110,11 @@ public class ActivitiUserManager extends UserEntityManager {
 
 	@Override
 	public Boolean checkPassword(String userId, String password) {
-		User liferayUser;
+		IUser<Long> liferayUser;
 		try {
 			liferayUser = authenticationService.getUserById(Long.parseLong(userId));
 			return authenticationService.authenticate(liferayUser.getEmailAddress(), password) != null;
-		} catch (NumberFormatException | NotConnectedToWebServiceException | UserDoesNotExistException | IOException
-				| AuthenticationRequired | WebServiceAccessError | InvalidCredentialsException e) {
+		} catch (NumberFormatException | InvalidCredentialsException | UserManagementException | AuthenticationRequired e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return false;
@@ -159,12 +161,18 @@ public class ActivitiUserManager extends UserEntityManager {
 			userList.add(findUserByEmail(userQuery.getEmail()));
 			return userList;
 		} else {
-			List<User> liferayUsers = authorizationService.getAllUsers();
-			for (User liferayUser : liferayUsers) {
-				userList.add(getActivitiUser(liferayUser));
+			Set<IUser<Long>> liferayUsers;
+			try {
+				liferayUsers = authorizationService.getAllUsers();
+				for (IUser<Long> liferayUser : liferayUsers) {
+					userList.add(getActivitiUser(liferayUser));
+				}
+				return userList;
+			} catch (UserManagementException e) {
+				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 			}
-			return userList;
 		}
+		return null;
 	}
 
 	@Override
@@ -199,11 +207,11 @@ public class ActivitiUserManager extends UserEntityManager {
 		throw new UnsupportedOperationException();
 	}
 
-	public IAuthorizationService getAuthorizationService() {
+	public IAuthorizationService<Long, Long, Long> getAuthorizationService() {
 		return authorizationService;
 	}
 
-	public void setAuthorizationService(IAuthorizationService authorizationService) {
+	public void setAuthorizationService(IAuthorizationService<Long, Long, Long> authorizationService) {
 		this.authorizationService = authorizationService;
 	}
 
