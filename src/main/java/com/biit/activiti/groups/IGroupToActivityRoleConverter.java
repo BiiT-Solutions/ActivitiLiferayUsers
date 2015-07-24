@@ -7,7 +7,7 @@ import com.biit.usermanager.entity.IRole;
 /**
  * This class must translate from Liferay Roles to Activiti groups.
  */
-public interface ILiferayGroupToActivityRoleConverter {
+public interface IGroupToActivityRoleConverter {
 
 	/**
 	 * Gets the Activiti GroupType equivalence from a Liferay role.

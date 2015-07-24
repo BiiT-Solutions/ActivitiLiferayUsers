@@ -25,18 +25,18 @@ public class ActivitiGroupManager extends GroupEntityManager {
 
 	private IAuthorizationService<Long, Long, Long> authorizationService;
 	private IAuthenticationService<Long, Long> authenticationService;
-	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
+	private IGroupToActivityRoleConverter groupToActivityConverter;
 
 	public ActivitiGroupManager(IAuthorizationService<Long, Long, Long> authorizationService,
 			IAuthenticationService<Long, Long> authenticationService,
-			ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
+			IGroupToActivityRoleConverter groupToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
-		this.liferayToActivityConverter = liferayToActivityConverter;
+		this.groupToActivityConverter = groupToActivityConverter;
 	}
 
 	public static GroupEntity getActivitiGroup(IRole<Long> liferayRole,
-			ILiferayGroupToActivityRoleConverter liferayToActivity) {
+			IGroupToActivityRoleConverter liferayToActivity) {
 		GroupEntity activitiGroup = new GroupEntity();
 		activitiGroup.setName(liferayToActivity.getGroupName(liferayRole));
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());
@@ -49,7 +49,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 	public GroupEntity findGroupById(String roleId) {
 		try {
 			IRole<Long> liferayUser = authorizationService.getRole(Long.parseLong(roleId));
-			return getActivitiGroup(liferayUser, liferayToActivityConverter);
+			return getActivitiGroup(liferayUser, groupToActivityConverter);
 		} catch (NumberFormatException | UserManagementException e) {
 			e.printStackTrace();
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
@@ -66,7 +66,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 			liferayUser = authenticationService.getUserById(Long.parseLong(userId));
 			Set<IRole<Long>> liferayRoles = authorizationService.getUserRoles(liferayUser);
 			for (IRole<Long> liferayRole : liferayRoles) {
-				activitiGroups.add(ActivitiGroupManager.getActivitiGroup(liferayRole, liferayToActivityConverter));
+				activitiGroups.add(ActivitiGroupManager.getActivitiGroup(liferayRole, groupToActivityConverter));
 			}
 		} catch (NumberFormatException | UserManagementException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
@@ -110,8 +110,8 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		if (!StringUtils.isEmpty(groupQuery.getName())) {
 			try {
 				groupList.add(getActivitiGroup(
-						authorizationService.getRole(liferayToActivityConverter.getRoleName(groupQuery.getName())),
-						liferayToActivityConverter));
+						authorizationService.getRole(groupToActivityConverter.getRoleName(groupQuery.getName())),
+						groupToActivityConverter));
 			} catch (UserManagementException e) {
 				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 			}
@@ -120,15 +120,15 @@ public class ActivitiGroupManager extends GroupEntityManager {
 			groupList.addAll(findGroupsByUser(groupQuery.getUserId()));
 			return groupList;
 		} else if (!StringUtils.isEmpty(groupQuery.getType())) {
-			Set<IRole<Long>> roles = liferayToActivityConverter.getRoles(GroupType.getGroupType(groupQuery.getType()));
+			Set<IRole<Long>> roles = groupToActivityConverter.getRoles(GroupType.getGroupType(groupQuery.getType()));
 			for (IRole<Long> role : roles) {
-				groupList.add(getActivitiGroup(role, liferayToActivityConverter));
+				groupList.add(getActivitiGroup(role, groupToActivityConverter));
 			}
 			return groupList;
 		} else {
-			Set<IRole<Long>> liferayRoles = liferayToActivityConverter.getAllRoles();
+			Set<IRole<Long>> liferayRoles = groupToActivityConverter.getAllRoles();
 			for (IRole<Long> liferayRole : liferayRoles) {
-				groupList.add(getActivitiGroup(liferayRole, liferayToActivityConverter));
+				groupList.add(getActivitiGroup(liferayRole, groupToActivityConverter));
 			}
 			return groupList;
 		}

@@ -6,7 +6,7 @@ import org.activiti.engine.impl.persistence.entity.UserIdentityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.biit.activiti.groups.ILiferayGroupToActivityRoleConverter;
+import com.biit.activiti.groups.IGroupToActivityRoleConverter;
 import com.biit.usermanager.security.IAuthenticationService;
 import com.biit.usermanager.security.IAuthorizationService;
 
@@ -18,7 +18,7 @@ public class ActivitiUserManagerFactory implements SessionFactory {
 	@Autowired
 	private IAuthenticationService<Long, Long> authenticationService;
 	@Autowired
-	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
+	private IGroupToActivityRoleConverter groupToActivityConverter;
 
 	@Override
 	public Class<?> getSessionType() {
@@ -27,6 +27,6 @@ public class ActivitiUserManagerFactory implements SessionFactory {
 
 	@Override
 	public Session openSession() {
-		return new ActivitiUserManager(authorizationService, authenticationService, liferayToActivityConverter);
+		return new ActivitiUserManager(authorizationService, authenticationService, groupToActivityConverter);
 	}
 }

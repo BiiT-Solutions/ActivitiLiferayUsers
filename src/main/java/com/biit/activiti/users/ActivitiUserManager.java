@@ -14,7 +14,7 @@ import org.activiti.engine.impl.persistence.entity.UserEntityManager;
 import org.springframework.util.StringUtils;
 
 import com.biit.activiti.groups.ActivitiGroupManager;
-import com.biit.activiti.groups.ILiferayGroupToActivityRoleConverter;
+import com.biit.activiti.groups.IGroupToActivityRoleConverter;
 import com.biit.activiti.logger.ActivitiUsersLogger;
 import com.biit.usermanager.entity.IRole;
 import com.biit.usermanager.entity.IUser;
@@ -31,14 +31,14 @@ import com.liferay.portal.model.User;
 public class ActivitiUserManager extends UserEntityManager {
 	private IAuthorizationService<Long, Long, Long> authorizationService;
 	private IAuthenticationService<Long, Long> authenticationService;
-	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
+	private IGroupToActivityRoleConverter groupToActivityConverter;
 
 	public ActivitiUserManager(IAuthorizationService<Long, Long, Long> authorizationService,
 			IAuthenticationService<Long, Long> authenticationService,
-			ILiferayGroupToActivityRoleConverter liferayToActivityConverter) {
+			IGroupToActivityRoleConverter groupToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
-		this.liferayToActivityConverter = liferayToActivityConverter;
+		this.groupToActivityConverter = groupToActivityConverter;
 	}
 
 	public static UserEntity getActivitiUser(IUser<Long> liferayUser) {
@@ -100,7 +100,7 @@ public class ActivitiUserManager extends UserEntityManager {
 			liferayUser = authenticationService.getUserById(Long.parseLong(userId));
 			Set<IRole<Long>> liferayRoles = authorizationService.getUserRoles(liferayUser);
 			for (IRole<Long> liferayRole : liferayRoles) {
-				activitiGroups.add(ActivitiGroupManager.getActivitiGroup(liferayRole, liferayToActivityConverter));
+				activitiGroups.add(ActivitiGroupManager.getActivitiGroup(liferayRole, groupToActivityConverter));
 			}
 		} catch (NumberFormatException | UserManagementException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);

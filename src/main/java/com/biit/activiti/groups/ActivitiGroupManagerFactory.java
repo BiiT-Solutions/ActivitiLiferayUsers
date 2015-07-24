@@ -17,7 +17,7 @@ public class ActivitiGroupManagerFactory implements SessionFactory {
 	@Autowired
 	private IAuthenticationService<Long, Long> authenticationService;
 	@Autowired
-	private ILiferayGroupToActivityRoleConverter liferayToActivityConverter;
+	private IGroupToActivityRoleConverter groupToActivityConverter;
 
 	@Override
 	public Class<?> getSessionType() {
@@ -26,7 +26,7 @@ public class ActivitiGroupManagerFactory implements SessionFactory {
 
 	@Override
 	public Session openSession() {
-		return new ActivitiGroupManager(authorizationService, authenticationService, liferayToActivityConverter);
+		return new ActivitiGroupManager(authorizationService, authenticationService, groupToActivityConverter);
 	}
 
 }
