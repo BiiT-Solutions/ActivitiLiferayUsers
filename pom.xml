@@ -5,7 +5,7 @@
 	<groupId>com.biit</groupId>
 	<artifactId>activiti-liferay-users</artifactId>
 	<packaging>jar</packaging>
-	<version>0.4.10-SNAPSHOT</version>
+	<version>0.4.10</version>
 	<name>Liferay users in Activiti</name>
 
 
@@ -25,7 +25,7 @@
 	<scm>
 		<connection>scm:git:git.biit-solutions.com:ActivitiLiferayUsers.git</connection>
 		<developerConnection>scm:git:git.biit-solutions.com:ActivitiLiferayUsers.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>activiti-liferay-users-0.4.10</tag>
 	</scm>
 
 	<properties>
