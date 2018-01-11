@@ -14,8 +14,10 @@ public class ActivitiGroupManagerFactory implements SessionFactory {
 
 	@Autowired
 	private IAuthorizationService<Long, Long, Long> authorizationService;
+	
 	@Autowired
 	private IAuthenticationService<Long, Long> authenticationService;
+	
 	@Autowired
 	private IGroupToActivityRoleConverter groupToActivityConverter;
 
