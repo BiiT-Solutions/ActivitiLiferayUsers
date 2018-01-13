@@ -5,12 +5,12 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.biit.liferay.security.AuthorizationService;
 import com.biit.usermanager.entity.IRole;
 import com.biit.usermanager.security.IActivity;
+import com.biit.usermanager.security.IRoleActivities;
 
 @Service
-public class BasicAuthorizationService extends AuthorizationService {
+public class RoleActivities implements IRoleActivities {
 
 	@Override
 	public Set<IActivity> getRoleActivities(IRole<Long> role) {
