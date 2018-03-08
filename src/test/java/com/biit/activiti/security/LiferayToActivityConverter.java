@@ -11,6 +11,7 @@ import com.biit.activiti.groups.IGroupToActivityRoleConverter;
 import com.biit.activiti.logger.ActivitiUsersLogger;
 import com.biit.usermanager.entity.IRole;
 import com.biit.usermanager.security.IAuthorizationService;
+import com.biit.usermanager.security.exceptions.RoleDoesNotExistsException;
 import com.biit.usermanager.security.exceptions.UserManagementException;
 
 @Service
@@ -30,7 +31,7 @@ public class LiferayToActivityConverter implements IGroupToActivityRoleConverter
 		for (TestRole testRole : TestRole.get(type)) {
 			try {
 				roles.add(authorizationService.getRole(testRole.getLiferayName()));
-			} catch (UserManagementException e) {
+			} catch (UserManagementException | RoleDoesNotExistsException e) {
 				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 			}
 		}
@@ -43,7 +44,7 @@ public class LiferayToActivityConverter implements IGroupToActivityRoleConverter
 		for (TestRole role : TestRole.values()) {
 			try {
 				roles.add(authorizationService.getRole(role.getLiferayName()));
-			} catch (UserManagementException e) {
+			} catch (UserManagementException | RoleDoesNotExistsException e) {
 				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 			}
 		}

@@ -16,6 +16,7 @@ import com.biit.usermanager.entity.IRole;
 import com.biit.usermanager.entity.IUser;
 import com.biit.usermanager.security.IAuthenticationService;
 import com.biit.usermanager.security.IAuthorizationService;
+import com.biit.usermanager.security.exceptions.RoleDoesNotExistsException;
 import com.biit.usermanager.security.exceptions.UserManagementException;
 
 /**
@@ -27,16 +28,14 @@ public class ActivitiGroupManager extends GroupEntityManager {
 	private IAuthenticationService<Long, Long> authenticationService;
 	private IGroupToActivityRoleConverter groupToActivityConverter;
 
-	public ActivitiGroupManager(IAuthorizationService<Long, Long, Long> authorizationService,
-			IAuthenticationService<Long, Long> authenticationService,
+	public ActivitiGroupManager(IAuthorizationService<Long, Long, Long> authorizationService, IAuthenticationService<Long, Long> authenticationService,
 			IGroupToActivityRoleConverter groupToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
 		this.groupToActivityConverter = groupToActivityConverter;
 	}
 
-	public static GroupEntity getActivitiGroup(IRole<Long> liferayRole,
-			IGroupToActivityRoleConverter liferayToActivity) {
+	public static GroupEntity getActivitiGroup(IRole<Long> liferayRole, IGroupToActivityRoleConverter liferayToActivity) {
 		GroupEntity activitiGroup = new GroupEntity();
 		activitiGroup.setName(liferayToActivity.getGroupName(liferayRole));
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());
@@ -50,8 +49,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		try {
 			IRole<Long> liferayUser = authorizationService.getRole(Long.parseLong(roleId));
 			return getActivitiGroup(liferayUser, groupToActivityConverter);
-		} catch (NumberFormatException | UserManagementException e) {
-			e.printStackTrace();
+		} catch (NumberFormatException | UserManagementException | RoleDoesNotExistsException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return null;
@@ -109,10 +107,9 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		}
 		if (!StringUtils.isEmpty(groupQuery.getName())) {
 			try {
-				groupList.add(getActivitiGroup(
-						authorizationService.getRole(groupToActivityConverter.getRoleName(groupQuery.getName())),
+				groupList.add(getActivitiGroup(authorizationService.getRole(groupToActivityConverter.getRoleName(groupQuery.getName())),
 						groupToActivityConverter));
-			} catch (UserManagementException e) {
+			} catch (UserManagementException | RoleDoesNotExistsException e) {
 				ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 			}
 			return groupList;

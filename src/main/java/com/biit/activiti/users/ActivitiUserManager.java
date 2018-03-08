@@ -22,6 +22,7 @@ import com.biit.usermanager.security.IAuthenticationService;
 import com.biit.usermanager.security.IAuthorizationService;
 import com.biit.usermanager.security.exceptions.AuthenticationRequired;
 import com.biit.usermanager.security.exceptions.InvalidCredentialsException;
+import com.biit.usermanager.security.exceptions.UserDoesNotExistException;
 import com.biit.usermanager.security.exceptions.UserManagementException;
 import com.liferay.portal.model.User;
 
@@ -33,8 +34,7 @@ public class ActivitiUserManager extends UserEntityManager {
 	private IAuthenticationService<Long, Long> authenticationService;
 	private IGroupToActivityRoleConverter groupToActivityConverter;
 
-	public ActivitiUserManager(IAuthorizationService<Long, Long, Long> authorizationService,
-			IAuthenticationService<Long, Long> authenticationService,
+	public ActivitiUserManager(IAuthorizationService<Long, Long, Long> authorizationService, IAuthenticationService<Long, Long> authenticationService,
 			IGroupToActivityRoleConverter groupToActivityConverter) {
 		this.authorizationService = authorizationService;
 		this.authenticationService = authenticationService;
@@ -80,7 +80,7 @@ public class ActivitiUserManager extends UserEntityManager {
 		try {
 			IUser<Long> liferayUser = authenticationService.getUserByEmail(userEmail);
 			return getActivitiUser(liferayUser);
-		} catch (NumberFormatException | UserManagementException e) {
+		} catch (NumberFormatException | UserManagementException | UserDoesNotExistException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return null;
@@ -114,7 +114,7 @@ public class ActivitiUserManager extends UserEntityManager {
 		try {
 			liferayUser = authenticationService.getUserById(Long.parseLong(userId));
 			return authenticationService.authenticate(liferayUser.getEmailAddress(), password) != null;
-		} catch (NumberFormatException | InvalidCredentialsException | UserManagementException | AuthenticationRequired e) {
+		} catch (NumberFormatException | InvalidCredentialsException | UserManagementException | AuthenticationRequired | UserDoesNotExistException e) {
 			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
 		}
 		return false;
@@ -186,8 +186,7 @@ public class ActivitiUserManager extends UserEntityManager {
 	}
 
 	@Override
-	public List<org.activiti.engine.identity.User> findUsersByNativeQuery(Map<String, Object> parameterMap,
-			int firstResult, int maxResults) {
+	public List<org.activiti.engine.identity.User> findUsersByNativeQuery(Map<String, Object> parameterMap, int firstResult, int maxResults) {
 		throw new UnsupportedOperationException();
 	}
 
