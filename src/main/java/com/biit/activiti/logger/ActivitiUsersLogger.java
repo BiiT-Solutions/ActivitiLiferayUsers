@@ -10,6 +10,8 @@ public class ActivitiUsersLogger extends BiitLogger{
 	
 	/**
 	 * Events that have business meaning (i.e. creating category, deleting form, ...). To follow user actions.
+	 * @param className name of the class
+	 * @param message to be displayed
 	 */
 	public static void info(String className, String message) {
 		info(logger, className, message);
@@ -17,6 +19,7 @@ public class ActivitiUsersLogger extends BiitLogger{
 
 	/**
 	 * Shows not critical errors. I.e. Email address not found, permissions not allowed for this user, ...
+	 * @param className 
 	 * 
 	 * @param message
 	 */
@@ -27,6 +30,8 @@ public class ActivitiUsersLogger extends BiitLogger{
 	/**
 	 * For following the trace of the execution. I.e. Knowing if the application access to a method, opening database
 	 * connection, etc.
+	 * @param className 
+	 * @param message 
 	 */
 	public static void debug(String className, String message) {
 		debug(logger, className, message);
@@ -34,6 +39,7 @@ public class ActivitiUsersLogger extends BiitLogger{
 
 	/**
 	 * To log any not expected error that can cause application malfunction.
+	 * @param className 
 	 * 
 	 * @param message
 	 */

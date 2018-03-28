@@ -28,7 +28,7 @@ public interface IGroupToActivityRoleConverter {
 
 	/**
 	 * Gets the Liferay equivalence role from an Activiti group. Must exactly do the inverse process of
-	 * {@link #getGroupName(Role) getGroupName}.
+	 * {@link #getGroupName(Role liferayRole), getGroupName}.
 	 * 
 	 * @param activitiGroupName name of the activiti group
 	 * @return string that represents the equivalence role from an activity group
@@ -38,7 +38,7 @@ public interface IGroupToActivityRoleConverter {
 	/**
 	 * Gets all available roles from Liferay. The list only must include all roles that can be use with the application.
 	 * 
-	 * @return
+	 * @return set of all roles from liferay.
 	 */
 	Set<IRole<Long>> getAllRoles();
 
@@ -46,8 +46,8 @@ public interface IGroupToActivityRoleConverter {
 	 * Gets all available roles from Liferay that are related to an Activiti GroupType. The list only must include all
 	 * roles that can be use with the application.
 	 * 
-	 * @param type
-	 * @return
+	 * @param type GroupType 
+	 * @return Set of all roles from liferay realted to a GroupType
 	 */
 	Set<IRole<Long>> getRoles(GroupType type);
 
