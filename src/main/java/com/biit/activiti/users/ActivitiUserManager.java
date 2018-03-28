@@ -55,7 +55,7 @@ public class ActivitiUserManager extends UserEntityManager {
 		UserEntity activitiUser = new UserEntity();
 		activitiUser.setEmail(liferayUser.getEmailAddress());
 		activitiUser.setFirstName(liferayUser.getFirstName());
-		activitiUser.setId(liferayUser.getId() + "");
+		activitiUser.setId(liferayUser.getUniqueId() + "");
 		activitiUser.setLastName(liferayUser.getLastName());
 		activitiUser.setPassword(liferayUser.getPassword());
 		activitiUser.setPicture(new Picture(null, null));

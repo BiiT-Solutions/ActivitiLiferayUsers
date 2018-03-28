@@ -39,7 +39,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		GroupEntity activitiGroup = new GroupEntity();
 		activitiGroup.setName(liferayToActivity.getGroupName(liferayRole));
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());
-		activitiGroup.setId(liferayRole.getId() + "");
+		activitiGroup.setId(liferayRole.getUniqueId() + "");
 		activitiGroup.setRevision(0);
 
 		return activitiGroup;
