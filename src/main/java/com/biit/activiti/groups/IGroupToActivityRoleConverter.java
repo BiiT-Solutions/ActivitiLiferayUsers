@@ -21,17 +21,17 @@ public interface IGroupToActivityRoleConverter {
 	 * Creates a unique group name from a Liferay role. This can be the role name, or in the case of multitenancy, a
 	 * composition of the role name and the organization name.
 	 * 
-	 * @param liferayRole
-	 * @return
+	 * @param liferayRole role from liferay
+	 * @return unique group name
 	 */
 	String getGroupName(IRole<Long> liferayRole);
 
 	/**
 	 * Gets the Liferay equivalence role from an Activiti group. Must exactly do the inverse process of
-	 * {@link #getGroupName(Role liferayRole)}.
+	 * {@link #getGroupName(Role) getGroupName}.
 	 * 
-	 * @param activitiGroupName
-	 * @return
+	 * @param activitiGroupName name of the activiti group
+	 * @return string that represents the equivalence role from an activity group
 	 */
 	String getRoleName(String activitiGroupName);
 
