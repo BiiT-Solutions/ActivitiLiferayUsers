@@ -12,8 +12,8 @@ public interface IGroupToActivityRoleConverter {
 	/**
 	 * Gets the Activiti GroupType equivalence from a Liferay role.
 	 * 
-	 * @param liferayRole
-	 * @return
+	 * @param liferayRole liferayRole
+	 * @return GroupType
 	 */
 	GroupType getActivitiGroup(IRole<Long> liferayRole);
 
