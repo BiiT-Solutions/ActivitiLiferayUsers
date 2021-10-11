@@ -1,8 +1,9 @@
 package com.biit.activiti.users;
 
+import org.activiti.engine.impl.interceptor.CommandContext;
 import org.activiti.engine.impl.interceptor.Session;
 import org.activiti.engine.impl.interceptor.SessionFactory;
-import org.activiti.engine.impl.persistence.entity.UserIdentityManager;
+import org.activiti.engine.impl.persistence.entity.UserEntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,16 @@ public class ActivitiUserManagerFactory implements SessionFactory {
 
 	@Override
 	public Class<?> getSessionType() {
-		return UserIdentityManager.class;
+		return UserEntityManager.class;
+	}
+
+
+	public Session openSession() {
+		return (Session) new ActivitiUserManager(authorizationService, authenticationService, groupToActivityConverter);
 	}
 
 	@Override
-	public Session openSession() {
-		return new ActivitiUserManager(authorizationService, authenticationService, groupToActivityConverter);
+	public Session openSession(CommandContext commandContext) {
+		return (Session) new ActivitiUserManager(authorizationService, authenticationService, groupToActivityConverter);
 	}
 }

@@ -1,8 +1,9 @@
 package com.biit.activiti.groups;
 
+import org.activiti.engine.impl.interceptor.CommandContext;
 import org.activiti.engine.impl.interceptor.Session;
 import org.activiti.engine.impl.interceptor.SessionFactory;
-import org.activiti.engine.impl.persistence.entity.GroupIdentityManager;
+import org.activiti.engine.impl.persistence.entity.GroupEntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,16 @@ public class ActivitiGroupManagerFactory implements SessionFactory {
 
 	@Override
 	public Class<?> getSessionType() {
-		return GroupIdentityManager.class;
+		return GroupEntityManager.class;
+	}
+
+
+	public Session openSession() {
+		return (Session) new ActivitiGroupManager(authorizationService, authenticationService, groupToActivityConverter);
 	}
 
 	@Override
-	public Session openSession() {
-		return new ActivitiGroupManager(authorizationService, authenticationService, groupToActivityConverter);
+	public Session openSession(CommandContext commandContext) {
+		return (Session) new ActivitiGroupManager(authorizationService, authenticationService, groupToActivityConverter);
 	}
-
 }

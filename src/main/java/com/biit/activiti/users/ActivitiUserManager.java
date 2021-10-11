@@ -6,10 +6,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.activiti.engine.identity.Picture;
+import org.activiti.engine.identity.UserQuery;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.UserQueryImpl;
 import org.activiti.engine.impl.persistence.entity.IdentityInfoEntity;
 import org.activiti.engine.impl.persistence.entity.UserEntity;
+import org.activiti.engine.impl.persistence.entity.UserEntityImpl;
 import org.activiti.engine.impl.persistence.entity.UserEntityManager;
 import org.springframework.util.StringUtils;
 
@@ -29,7 +31,7 @@ import com.liferay.portal.model.User;
 /**
  * Allows the use of Liferay User in Activiti.
  */
-public class ActivitiUserManager extends UserEntityManager {
+public class ActivitiUserManager implements UserEntityManager {
 	private IAuthorizationService<Long, Long, Long> authorizationService;
 	private IAuthenticationService<Long, Long> authenticationService;
 	private IGroupToActivityRoleConverter groupToActivityConverter;
@@ -52,7 +54,7 @@ public class ActivitiUserManager extends UserEntityManager {
 		if (liferayUser == null) {
 			return null;
 		}
-		UserEntity activitiUser = new UserEntity();
+		UserEntity activitiUser = new UserEntityImpl();
 		activitiUser.setEmail(liferayUser.getEmailAddress());
 		activitiUser.setFirstName(liferayUser.getFirstName());
 		activitiUser.setId(liferayUser.getUniqueId() + "");
@@ -64,7 +66,7 @@ public class ActivitiUserManager extends UserEntityManager {
 		return activitiUser;
 	}
 
-	@Override
+
 	public UserEntity findUserById(String userId) {
 		try {
 			IUser<Long> liferayUser = authenticationService.getUserById(Long.parseLong(userId));
@@ -109,6 +111,11 @@ public class ActivitiUserManager extends UserEntityManager {
 	}
 
 	@Override
+	public UserQuery createNewUserQuery() {
+		return null;
+	}
+
+	@Override
 	public Boolean checkPassword(String userId, String password) {
 		IUser<Long> liferayUser;
 		try {
@@ -120,10 +127,6 @@ public class ActivitiUserManager extends UserEntityManager {
 		return false;
 	}
 
-	@Override
-	public void insertUser(org.activiti.engine.identity.User user) {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public void updateUser(org.activiti.engine.identity.User updatedUser) {
@@ -136,24 +139,9 @@ public class ActivitiUserManager extends UserEntityManager {
 	}
 
 	@Override
-	public void deleteUser(String userId) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public IdentityInfoEntity findUserInfoByUserIdAndKey(String userId, String key) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public List<String> findUserInfoKeysByUserIdAndType(String userId, String type) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public List<org.activiti.engine.identity.User> findUserByQueryCriteria(UserQueryImpl query, Page page) {
-		List<org.activiti.engine.identity.User> userList = new ArrayList<org.activiti.engine.identity.User>();
-		UserQueryImpl userQuery = (UserQueryImpl) query;
+		List<org.activiti.engine.identity.User> userList = new ArrayList<>();
+		UserQueryImpl userQuery = query;
 		if (!StringUtils.isEmpty(userQuery.getId())) {
 			userList.add(findUserById(userQuery.getId()));
 			return userList;
@@ -180,10 +168,6 @@ public class ActivitiUserManager extends UserEntityManager {
 		return findUserByQueryCriteria(query, null).size();
 	}
 
-	@Override
-	public List<org.activiti.engine.identity.User> findPotentialStarterUsers(String proceDefId) {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public List<org.activiti.engine.identity.User> findUsersByNativeQuery(Map<String, Object> parameterMap, int firstResult, int maxResults) {
@@ -206,6 +190,11 @@ public class ActivitiUserManager extends UserEntityManager {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public void deletePicture(org.activiti.engine.identity.User user) {
+		throw new UnsupportedOperationException();
+	}
+
 	public IAuthorizationService<Long, Long, Long> getAuthorizationService() {
 		return authorizationService;
 	}
@@ -214,4 +203,55 @@ public class ActivitiUserManager extends UserEntityManager {
 		this.authorizationService = authorizationService;
 	}
 
+	@Override
+	public UserEntity create() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public UserEntity findById(String userId) {
+		try {
+			IUser<Long> liferayUser = authenticationService.getUserById(Long.parseLong(userId));
+			return getActivitiUser(liferayUser);
+		} catch (NumberFormatException | UserManagementException e) {
+			e.printStackTrace();
+			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public void insert(UserEntity entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void insert(UserEntity entity, boolean b) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public UserEntity update(UserEntity entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public UserEntity update(UserEntity entity, boolean b) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void delete(String s) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void delete(UserEntity entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void delete(UserEntity entity, boolean b) {
+		throw new UnsupportedOperationException();
+	}
 }

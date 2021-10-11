@@ -2,13 +2,17 @@ package com.biit.activiti.groups;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
 import org.activiti.engine.impl.GroupQueryImpl;
 import org.activiti.engine.impl.Page;
 import org.activiti.engine.impl.persistence.entity.GroupEntity;
+import org.activiti.engine.impl.persistence.entity.GroupEntityImpl;
 import org.activiti.engine.impl.persistence.entity.GroupEntityManager;
+import org.activiti.engine.impl.persistence.entity.GroupEntityManagerImpl;
 import org.springframework.util.StringUtils;
 
 import com.biit.activiti.logger.ActivitiUsersLogger;
@@ -22,7 +26,7 @@ import com.biit.usermanager.security.exceptions.UserManagementException;
 /**
  * Allows the use of Liferay Roles as Activiti groups.
  */
-public class ActivitiGroupManager extends GroupEntityManager {
+public class ActivitiGroupManager implements GroupEntityManager {
 
 	private IAuthorizationService<Long, Long, Long> authorizationService;
 	private IAuthenticationService<Long, Long> authenticationService;
@@ -36,7 +40,7 @@ public class ActivitiGroupManager extends GroupEntityManager {
 	}
 
 	public static GroupEntity getActivitiGroup(IRole<Long> liferayRole, IGroupToActivityRoleConverter liferayToActivity) {
-		GroupEntity activitiGroup = new GroupEntity();
+		GroupEntity activitiGroup = new GroupEntityImpl();
 		activitiGroup.setName(liferayToActivity.getGroupName(liferayRole));
 		activitiGroup.setType(liferayToActivity.getActivitiGroup(liferayRole).getType());
 		activitiGroup.setId(liferayRole.getUniqueId() + "");
@@ -73,28 +77,25 @@ public class ActivitiGroupManager extends GroupEntityManager {
 	}
 
 	@Override
+	public List<Group> findGroupsByNativeQuery(Map<String, Object> map, int i, int i1) {
+		return null;
+	}
+
+	@Override
+	public long findGroupCountByNativeQuery(Map<String, Object> map) {
+		return 0;
+	}
+
+	@Override
 	public org.activiti.engine.identity.Group createNewGroup(String groupId) {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public void insertGroup(org.activiti.engine.identity.Group group) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void updateGroup(org.activiti.engine.identity.Group updatedGroup) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void deleteGroup(String groupId) {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public GroupQuery createNewGroupQuery() {
-		return super.createNewGroupQuery();
+		return null;
+		//return GroupEntityManagerImpl.createNewGroupQuery();
 	}
 
 	@Override
@@ -149,4 +150,54 @@ public class ActivitiGroupManager extends GroupEntityManager {
 		this.authorizationService = authorizationService;
 	}
 
+	@Override
+	public GroupEntity create() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public GroupEntity findById(String roleId) {
+		try {
+			IRole<Long> liferayUser = authorizationService.getRole(Long.parseLong(roleId));
+			return getActivitiGroup(liferayUser, groupToActivityConverter);
+		} catch (NumberFormatException | UserManagementException | RoleDoesNotExistsException e) {
+			ActivitiUsersLogger.errorMessage(this.getClass().getName(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public void insert(GroupEntity entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void insert(GroupEntity entity, boolean b) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public GroupEntity update(GroupEntity entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public GroupEntity update(GroupEntity entity, boolean b) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void delete(String s) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void delete(GroupEntity entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void delete(GroupEntity entity, boolean b) {
+		throw new UnsupportedOperationException();
+	}
 }
