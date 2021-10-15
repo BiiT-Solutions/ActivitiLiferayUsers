@@ -58,7 +58,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 	public void fullTest() {
 		RuntimeService runtimeService = processEngine.getRuntimeService();
 		// Start a process instance
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("days", 4);
 		variables.put("eMail", "dummy@biit-solutions.com");
 		variables.put("startDate", "01-01-2020");
@@ -78,7 +78,6 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 
 		// Other simple way to start the process.
 		String procId = runtimeService.startProcessInstanceByKey(HOLIDAY_PROCESS_NAME, variables).getId();
-
 		// Get the first task
 		TaskService taskService = processEngine.getTaskService();
 		List<Task> tasks = taskService.createTaskQuery().processInstanceId(procId).list();
@@ -92,7 +91,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 		tasks = taskService.createTaskQuery().taskAssignee(HOLIDAY_PROCESS_APPROVE_TASK_USER2).list();
 		for (Task task : tasks) {
 			// Complete the task
-			variables = new HashMap<String, Object>();
+			variables = new HashMap<>();
 			variables.put("approved", true);
 			taskService.complete(task.getId(), variables);
 		}
@@ -132,7 +131,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 		TaskService taskService = processEngine.getTaskService();
 		Assert.assertNotNull(taskService);
 
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("days", 2);
 		variables.put("eMail", "dummy@biit-solutions.com");
 		variables.put("startDate", "01-01-2020");
@@ -156,7 +155,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 		TaskService taskService = processEngine.getTaskService();
 		Assert.assertNotNull(taskService);
 
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("days", 4);
 		variables.put("startDate", "01-01-2020");
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(HOLIDAY_PROCESS_NAME, variables);
@@ -216,7 +215,7 @@ public class SimpleProcessTest extends AbstractTransactionalTestNGSpringContextT
 		Assert.assertEquals(1, taskService.createTaskQuery().taskAssignee(HOLIDAY_PROCESS_APPROVE_TASK_USER).count());
 		Task requestApproval = taskService.createTaskQuery().processInstanceId(holidayRequestId).list().get(0);
 		// Holidays are approved... Task is resolved!
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("approved", true);
 		taskService.complete(requestApproval.getId(), variables);
 		// taskService.saveTask(requestApproval);
