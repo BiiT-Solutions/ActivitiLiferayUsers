@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.biit</groupId>
+	<groupId>com.biit-solutions</groupId>
 	<artifactId>activiti-liferay-users</artifactId>
 	<packaging>jar</packaging>
 	<version>0.6.4-SNAPSHOT</version>
@@ -12,19 +12,33 @@
 	<distributionManagement>
 		<repository>
 			<id>central</id>
-			<name>libs-releases</name>
-			<url>https://artifactory.biit-solutions.com/artifactory/libs-release</url>
+			<name>Maven Central</name>
+			<url>https://repo.maven.apache.org/maven2</url>
 		</repository>
 		<snapshotRepository>
-			<id>snapshots</id>
-			<name>libs-snapshot</name>
-			<url>https://artifactory.biit-solutions.com/artifactory/libs-snapshot</url>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/BiiT-Solutions/ActivitiLiferayUsers</url>
 		</snapshotRepository>
 	</distributionManagement>
 
+	<licenses>
+		<license>
+			<name>GNU AGPL v3</name>
+			<url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>BiiT Sourcing Solutions S.L.</name>
+		<url>https://www.biit-solutions.com/</url>
+	</organization>
+
 	<scm>
-		<connection>scm:git:git.biit-solutions.com:Java/ActivitiLiferayUsers.git</connection>
-		<developerConnection>scm:git:git.biit-solutions.com:Java/ActivitiLiferayUsers.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/BiiT-Solutions/ActivitiLiferayUsers.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/BiiT-Solutions/ActivitiLiferayUsers.git</developerConnection>
+		<url>https://github.com/BiiT-Solutions/ActivitiLiferayUsers.git</url>
 	  	<tag>HEAD</tag>
 	</scm>
 
@@ -295,6 +309,31 @@
 						<checkModificationExclude>pom.xml</checkModificationExclude>
 					</checkModificationExcludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license-maven-plugin.version}</version>
+				<configuration>
+					<organizationName>BiiT Sourcing Solutions S.L.</organizationName>
+					<inceptionYear>2015</inceptionYear>
+					<licenseName>agpl_v3</licenseName>
+					<excludes>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/*.xml</exclude>
+						<exclude>**/*.xhtml</exclude>
+						<exclude>**/*.json</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>first</id>
+						<goals>
+							<goal>update-file-header</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
